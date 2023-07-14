@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     .connect(
       process.env.MONGO_URI
     )
-    .then(() => {
+    .then(async () => {
       const store = new MongoStore({ mongoose: mongoose });
       const client = new Client({
         authStrategy: new RemoteAuth({
@@ -26,9 +26,9 @@ export default async function handler(req, res) {
         qrcode.generate(qr, { small: true });
       });
 
-      client.on("ready", () => {
+      client.on("ready", async () => {
         console.log("Client is ready!");
-        clientStatus = true;
+        await store.save({session: 'yourSessionName'});
       });
 
       client.on("message", async (message) => {
